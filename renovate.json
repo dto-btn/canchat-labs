@@ -17,7 +17,10 @@
 		"openwebui/backend/requirements*.txt",
 		"openwebui/backend/requirements*.lock",
 		"openwebui/pyproject.toml",
-		"openwebui/uv.lock"
+		"openwebui/uv.lock",
+		"openwebui/**/Dockerfile*",
+		"openwebui/**/docker-compose*.y*ml",
+		"openwebui/**/compose*.y*ml"
 	],
 	"packageRules": [
 		{
