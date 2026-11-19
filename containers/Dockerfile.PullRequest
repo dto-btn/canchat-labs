@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_IMAGE
-ARG PYTHON_IMAGE
-ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.12.10
+ARG NODE_VERSION
+ARG PYTHON_VERSION
+ARG UV_VERSION
 
 ARG BUILD_HASH=dev-build
 ARG BUILD_CHANNEL=main
@@ -14,7 +14,7 @@ ARG AUXILIARY_EMBEDDING_MODEL=TaylorAI/bge-micro-v2
 # Frontend
 # ------------------------------------------------------------------
 
-FROM --platform=$BUILDPLATFORM ${NODE_IMAGE} AS frontend
+FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-alpine3.20 AS frontend
 
 ARG BUILD_HASH
 ARG BUILD_CHANNEL
@@ -44,13 +44,13 @@ RUN npm run build
 # Dependency management
 # ------------------------------------------------------------------
 
-FROM ${UV_IMAGE} AS uv
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 
 # ------------------------------------------------------------------
 # Production runtime
 # ------------------------------------------------------------------
 
-FROM ${PYTHON_IMAGE} AS runtime
+FROM python:${PYTHON_VERSION}-slim-trixie AS runtime
 
 ARG BUILD_HASH
 ARG EMBEDDING_MODEL
@@ -64,6 +64,7 @@ ENV ENV=prod \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never \
     HOME=/home/nonroot \
     VIRTUAL_ENV=/opt/venv \
     PATH=/opt/venv/bin:$PATH \
@@ -91,27 +92,39 @@ ENV DATA_DIR=/app/backend/data \
 
 WORKDIR /app/backend
 
-# Operating system dependencies (Wolfi)
+# Operating system dependencies
 
-RUN apk add --no-cache \
-    bash \
-    curl \
-    jq \
-    ca-certificates \
-    git \
-    build-base \
-    mariadb-connector-c-dev \
-    libsm \
-    libxext \
-    pandoc \
-    ffmpeg
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        bash \
+        curl \
+        jq \
+        ca-certificates \
+        git \
+        build-essential \
+        libmariadb-dev \
+        libsm6 \
+        libxext6 \
+        pandoc \
+        ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create non-root runtime user
+
+RUN groupadd --gid 65532 nonroot && \
+    useradd \
+        --uid 65532 \
+        --gid 65532 \
+        --create-home \
+        --shell /usr/sbin/nologin \
+        nonroot
 
 # Python dependencies
 
 COPY openwebui/backend/requirements.lock ./
 
 RUN --mount=from=uv,source=/uv,target=/tmp/uv \
-    /tmp/uv venv --python python3.12 /opt/venv && \
+    /tmp/uv venv --python /usr/local/bin/python3 /opt/venv && \
     /tmp/uv pip install \
         --python /opt/venv/bin/python \
         --index-url https://download.pytorch.org/whl/cpu \
