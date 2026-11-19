@@ -256,6 +256,11 @@ pydocstyle.convention = "google"
 
 [tool.uv]
 required-version = "==0.12.10"
+
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+
 conflicts = [
     [{ extra = "cpu" }, { extra = "cuda" }, { extra = "slim" }],
     [{ extra = "full" }, { extra = "slim" }],
@@ -285,6 +290,3 @@ explicit = true
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
-required-environments = [
-    "sys_platform == 'linux' and platform_machine == 'x86_64'",
-]
