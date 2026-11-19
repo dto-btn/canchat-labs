@@ -131,12 +131,51 @@ jobs:
 
           git switch -c "$BRANCH"
 
-          git merge --no-commit --no-ff \
+          if ! git merge --no-commit --no-ff \
             -s ort \
             -Xsubtree="$UPSTREAM_DIRECTORY" \
-            "$UPSTREAM_COMMIT"
+            "$UPSTREAM_COMMIT"; then
+
+            git rev-parse --verify MERGE_HEAD
+
+            CONFLICTS=$(git diff --name-only --diff-filter=U)
+
+            if [ -z "$CONFLICTS" ]; then
+              echo "::error::Upstream merge failed unexpectedly."
+              exit 1
+            fi
+
+            echo "Merge conflicts detected:"
+            echo "$CONFLICTS"
+          fi
 
           git rev-parse --verify MERGE_HEAD
+
+      - name: Remove legacy dependency manifests
+        if: steps.integration.outputs.branch != ''
+        run: |
+          # Canchat Labs uses pyproject.toml and uv.lock exclusively.
+          # Remove legacy manifests and resolve their merge conflicts.
+
+          git rm -f --ignore-unmatch -- \
+            "$UPSTREAM_DIRECTORY/backend/requirements.txt" \
+            "$UPSTREAM_DIRECTORY/backend/requirements.lock" \
+            "$UPSTREAM_DIRECTORY/backend/requirements-slim.txt" \
+            "$UPSTREAM_DIRECTORY/backend/requirements-slim.lock" \
+            "$UPSTREAM_DIRECTORY/backend/update-locks.sh"
+
+      - name: Validate merge conflicts
+        if: steps.integration.outputs.branch != ''
+        run: |
+          CONFLICTS=$(git diff --name-only --diff-filter=U)
+
+          if [ -n "$CONFLICTS" ]; then
+            echo "::error::Unresolved upstream merge conflicts."
+            echo "$CONFLICTS"
+            exit 1
+          fi
+
+          echo "No unresolved merge conflicts."
 
       - name: Validate merge scope
         if: steps.integration.outputs.branch != ''
@@ -190,6 +229,9 @@ jobs:
             --head "$BRANCH" \
             --title "fix(upstream): import Open WebUI $VERSION" \
             --body "Imports Open WebUI $VERSION into CanChat Labs.
+
+          Legacy Python dependency manifests have been removed.
+          CanChat Labs uses pyproject.toml and uv.lock.
 
           Upstream release:
           https://github.com/$UPSTREAM_REPOSITORY/releases/tag/$VERSION"
