@@ -285,3 +285,6 @@ explicit = true
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
