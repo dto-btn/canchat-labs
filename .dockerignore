@@ -1,0 +1,16 @@
+.git
+.github
+.devcontainer
+
+**/node_modules
+**/.venv
+**/.svelte-kit
+**/__pycache__
+**/.env
+**/.env.*
+**/*.db
+
+openwebui/backend/data
+openwebui/old.github
+openwebui/build
+openwebui/docs

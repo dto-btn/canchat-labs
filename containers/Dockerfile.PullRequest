@@ -1,0 +1,166 @@
+# syntax=docker/dockerfile:1
+
+ARG NODE_IMAGE
+ARG PYTHON_IMAGE
+ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.12.10
+
+ARG BUILD_HASH=dev-build
+ARG BUILD_CHANNEL=main
+
+ARG EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+ARG AUXILIARY_EMBEDDING_MODEL=TaylorAI/bge-micro-v2
+
+# ------------------------------------------------------------------
+# Frontend
+# ------------------------------------------------------------------
+
+FROM --platform=$BUILDPLATFORM ${NODE_IMAGE} AS frontend
+
+ARG BUILD_HASH
+ARG BUILD_CHANNEL
+
+USER root
+
+WORKDIR /app
+
+RUN apk add --no-cache git
+
+ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
+    CYPRESS_INSTALL_BINARY=0 \
+    NODE_OPTIONS=--max-old-space-size=12288
+
+COPY openwebui/package.json openwebui/package-lock.json ./
+
+RUN npm ci --force
+
+COPY openwebui/ ./
+
+ENV APP_BUILD_HASH=${BUILD_HASH} \
+    APP_BUILD_CHANNEL=${BUILD_CHANNEL}
+
+RUN npm run build
+
+# ------------------------------------------------------------------
+# Dependency management
+# ------------------------------------------------------------------
+
+FROM ${UV_IMAGE} AS uv
+
+# ------------------------------------------------------------------
+# Production runtime
+# ------------------------------------------------------------------
+
+FROM ${PYTHON_IMAGE} AS runtime
+
+ARG BUILD_HASH
+ARG EMBEDDING_MODEL
+ARG AUXILIARY_EMBEDDING_MODEL
+
+USER root
+
+ENV ENV=prod \
+    PORT=8080 \
+    DOCKER=true \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    UV_LINK_MODE=copy \
+    HOME=/home/nonroot \
+    VIRTUAL_ENV=/opt/venv \
+    PATH=/opt/venv/bin:$PATH \
+    USE_CUDA_DOCKER=false \
+    USE_OLLAMA_DOCKER=false \
+    USE_SLIM_DOCKER=false \
+    SCARF_NO_ANALYTICS=true \
+    DO_NOT_TRACK=true \
+    ANONYMIZED_TELEMETRY=false
+
+# Model configuration
+
+ENV RAG_EMBEDDING_MODEL=${EMBEDDING_MODEL} \
+    AUXILIARY_EMBEDDING_MODEL=${AUXILIARY_EMBEDDING_MODEL} \
+    RAG_RERANKING_MODEL="" \
+    WHISPER_MODEL=base \
+    TIKTOKEN_ENCODING_NAME=cl100k_base
+
+ENV DATA_DIR=/app/backend/data \
+    HF_HOME=/app/backend/data/cache/embedding/models \
+    SENTENCE_TRANSFORMERS_HOME=/app/backend/data/cache/embedding/models \
+    WHISPER_MODEL_DIR=/app/backend/data/cache/whisper/models \
+    TIKTOKEN_CACHE_DIR=/app/backend/data/cache/tiktoken \
+    WEBUI_SECRET_KEY_FILE=/app/backend/data/.webui_secret_key
+
+WORKDIR /app/backend
+
+# Operating system dependencies (Wolfi)
+
+RUN apk add --no-cache \
+    bash \
+    curl \
+    jq \
+    ca-certificates \
+    git \
+    build-base \
+    mariadb-connector-c-dev \
+    libsm \
+    libxext \
+    pandoc \
+    ffmpeg
+
+# Python dependencies
+
+COPY openwebui/backend/requirements.lock ./
+
+RUN --mount=from=uv,source=/uv,target=/tmp/uv \
+    /tmp/uv venv --python python3.12 /opt/venv && \
+    /tmp/uv pip install \
+        --python /opt/venv/bin/python \
+        --index-url https://download.pytorch.org/whl/cpu \
+        --no-cache \
+        'torch<=2.9.1' torchvision torchaudio && \
+    /tmp/uv pip install \
+        --python /opt/venv/bin/python \
+        --no-deps \
+        --require-hashes \
+        --no-cache \
+        -r requirements.lock
+
+# Prepare runtime directories
+
+RUN mkdir -p \
+    /app/backend/data \
+    /home/nonroot/.cache/chroma && \
+    chown -R 65532:65532 \
+        /app/backend/data \
+        /home/nonroot
+
+# Copy application
+
+COPY --from=frontend /app/build /app/build
+COPY --from=frontend /app/backend /app/backend
+COPY --from=frontend /app/CHANGELOG.md /app/CHANGELOG.md
+COPY --from=frontend /app/package.json /app/package.json
+
+RUN chown -R 65532:65532 \
+    /app/backend/data \
+    /app/backend/open_webui/static
+
+USER 65532:65532
+
+# Download models during build
+
+RUN python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" && \
+    python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['AUXILIARY_EMBEDDING_MODEL'], device='cpu')" && \
+    python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" && \
+    python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])"
+
+ENV WEBUI_BUILD_HASH=${BUILD_HASH}
+
+EXPOSE 8080
+
+HEALTHCHECK CMD curl --silent --fail \
+    http://localhost:${PORT}/health \
+    | jq -ne 'input.status == true' || exit 1
+
+ENTRYPOINT []
+
+CMD ["bash", "start.sh"]
