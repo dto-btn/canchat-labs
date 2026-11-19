@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/dto-btn/canchat-labs/compare/v0.1.0...v0.1.1) (2026-11-19)
+
+
+### Maintenance
+
+* **deps:** pin dependencies ([#30](https://github.com/dto-btn/canchat-labs/issues/30)) ([923491c](https://github.com/dto-btn/canchat-labs/commit/923491cc6ab1cd1946adff4acc80e9c75f0c2e6c))
+
 ## 0.1.0 (2026-11-19)
 
 
