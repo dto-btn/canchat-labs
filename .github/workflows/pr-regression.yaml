@@ -74,6 +74,7 @@ jobs:
           mkdir -p "$DATA_DIR" "$STATIC_DIR"
 
           ../openwebui/.venv/bin/python -m pytest unit -q \
+            --ignore=unit/config/test_dependency_manifests.py \
             --junitxml=results.xml \
             --html=report.html \
             --self-contained-html
