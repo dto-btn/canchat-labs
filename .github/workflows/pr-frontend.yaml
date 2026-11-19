@@ -1,9 +1,13 @@
-name: Frontend CI
+name: Frontend CI Tests
 
 on:
   pull_request:
     branches:
       - main
+    paths:
+      - "openwebui/**"
+      - ".nvmrc"
+      - ".github/workflows/pr-frontend.yaml"
   workflow_dispatch:
 
 permissions:
