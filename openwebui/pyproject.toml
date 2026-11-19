@@ -107,7 +107,7 @@ full = [
     "transformers==5.5.4",
     "sentence-transformers==5.5.1",
     "accelerate==1.13.0",
-    "pyarrow==23.0.1", # fix: pin pyarrow version to 20 for rpi compatibility # 15897
+    "pyarrow==23.0.1",
     "einops==0.8.2",
     "pypdf==6.21.2",
     "docx2txt==0.9",
