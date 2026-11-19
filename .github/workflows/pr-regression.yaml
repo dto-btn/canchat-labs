@@ -46,20 +46,22 @@ jobs:
         with:
           version-file: openwebui/pyproject.toml
 
-      - name: Install CPU-only PyTorch
+      - name: Install locked backend dependencies
         run: >
-          uv pip install --system
-          "torch<=2.9.1"
-          --index-url https://download.pytorch.org/whl/cpu
+          uv sync --project openwebui
+          --locked --no-dev --no-install-project --extra cpu
 
-      - name: Install backend and test dependencies
-        run: >
-          uv pip install --system
-          -r openwebui/backend/requirements.txt
-          -e "./regression-tests[postgres]"
+      - name: Install regression test dependencies
+        run: |
+          uv export --project openwebui --locked --no-dev --extra cpu \
+            --no-hashes --no-emit-project --output-file "$RUNNER_TEMP/backend-constraints.txt"
+
+          uv pip install --python openwebui/.venv/bin/python \
+            --constraint "$RUNNER_TEMP/backend-constraints.txt" \
+            pip -e "./regression-tests[postgres]"
 
       - name: Install spaCy language model
-        run: python -m spacy download en_core_web_sm
+        run: openwebui/.venv/bin/python -m spacy download en_core_web_sm
 
       - name: Run regression tests
         working-directory: regression-tests
@@ -71,7 +73,7 @@ jobs:
         run: |
           mkdir -p "$DATA_DIR" "$STATIC_DIR"
 
-          python -m pytest unit -q \
+          ../openwebui/.venv/bin/python -m pytest unit -q \
             --junitxml=results.xml \
             --html=report.html \
             --self-contained-html

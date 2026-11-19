@@ -11,6 +11,12 @@
 	"semanticCommitType": "fix",
 	"dependencyDashboard": true,
 	"groupSingleUpdates": true,
+	"ignorePaths": [
+		"**/node_modules/**",
+		"**/bower_components/**",
+		"openwebui/backend/requirements*.txt",
+		"openwebui/backend/requirements*.lock"
+	],
 	"packageRules": [
 		{
 			"groupName": "GitHub Actions",
@@ -362,25 +368,6 @@
 			"groupSlug": "rust-dependencies",
 			"matchManagers": ["cargo"],
 			"matchUpdateTypes": ["minor", "patch"]
-		},
-		{
-			"description": "Regenerate Python container dependency lockfiles",
-			"matchFileNames": [
-				"openwebui/pyproject.toml",
-				"openwebui/backend/requirements*.txt"
-			],
-			"postUpgradeTasks": {
-				"commands": ["bash openwebui/backend/update-locks.sh"],
-				"fileFilters": [
-					"openwebui/backend/requirements.lock",
-					"openwebui/backend/requirements-slim.lock"
-				],
-				"executionMode": "branch",
-				"installTools": {
-					"python": {},
-					"uv": {}
-				}
-			}
 		}
 	]
 }
