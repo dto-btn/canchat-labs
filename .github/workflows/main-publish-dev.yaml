@@ -1,0 +1,79 @@
+name: Publish Development Container
+
+on:
+  release:
+    types:
+      - published
+
+permissions: {}
+
+concurrency:
+  group: publish-development-container
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish Development Container
+    if: github.event.release.prerelease
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read project versions
+        id: versions
+        shell: bash
+        run: |
+          NODE_VERSION=$(cat .nvmrc)
+          PYTHON_VERSION=$(sed -nE 's/^requires-python = ">=([0-9]+\.[0-9]+),<[^"]+"$/\1/p' openwebui/pyproject.toml)
+          UV_VERSION=$(sed -nE 's/^required-version = "==([0-9]+\.[0-9]+\.[0-9]+)"$/\1/p' openwebui/pyproject.toml)
+          RELEASE_VERSION=$(cat version.txt)
+
+          test -n "$NODE_VERSION"
+          test -n "$PYTHON_VERSION"
+          test -n "$UV_VERSION"
+          test -n "$RELEASE_VERSION"
+
+          echo "node_version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "python_version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
+          echo "uv_version=$UV_VERSION" >> "$GITHUB_OUTPUT"
+          echo "release_version=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build and publish container image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: ./containers/Dockerfile.Release
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ steps.versions.outputs.release_version }}-dev
+            ghcr.io/${{ github.repository }}:dev
+          labels: |
+            org.opencontainers.image.version=${{ steps.versions.outputs.release_version }}-dev
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          build-args: |
+            NODE_VERSION=${{ steps.versions.outputs.node_version }}
+            PYTHON_VERSION=${{ steps.versions.outputs.python_version }}
+            UV_VERSION=${{ steps.versions.outputs.uv_version }}
+            BUILD_HASH=${{ github.sha }}
+            BUILD_CHANNEL=dev
