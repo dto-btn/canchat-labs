@@ -1,13 +1,33 @@
-{
-	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["config:best-practices", "mergeConfidence:all-badges"],
-	"baseBranchPatterns": ["main"],
-	"addLabels": ["renovate"],
-	"rebaseWhen": "auto",
-	"timezone": "America/Toronto",
-	"minimumReleaseAge": "14 days",
-	"semanticCommits": "enabled",
-	"semanticCommitScope": "deps",
-	"semanticCommitType": "fix",
-	"dependencyDashboard": true
-}
+"packageRules": [
+    {
+        "groupName": "GitHub Actions",
+        "matchManagers": ["github-actions"],
+        "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"]
+    },
+    {
+        "groupName": "Svelte framework",
+        "matchManagers": ["npm"],
+        "matchPackageNames": [
+            "svelte",
+            "@sveltejs/*",
+            "svelte-check",
+            "vite",
+            "vite-plugin-*"
+        ],
+        "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+        "groupName": "Database and caching",
+        "matchDatasources": ["pypi"],
+        "matchPackageNames": [
+            "sqlalchemy",
+            "alembic",
+            "psycopg*",
+            "redis",
+            "hiredis",
+            "pymysql",
+            "aiosqlite"
+        ],
+        "matchUpdateTypes": ["minor", "patch"]
+    }
+]
