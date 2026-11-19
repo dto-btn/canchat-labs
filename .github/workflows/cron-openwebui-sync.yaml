@@ -174,20 +174,6 @@ jobs:
 
           git rev-parse --verify MERGE_HEAD
 
-      - name: Remove upstream dependency manifests
-        if: steps.integration.outputs.branch != ''
-        run: |
-          # Canchat Labs owns the root pyproject.toml and uv.lock.
-          # Remove imported Python manifests and resolve their merge conflicts.
-
-          git rm -f --ignore-unmatch -- \
-            "$UPSTREAM_DIRECTORY/pyproject.toml" \
-            "$UPSTREAM_DIRECTORY/uv.lock" \
-            "$UPSTREAM_DIRECTORY/backend/requirements.txt" \
-            "$UPSTREAM_DIRECTORY/backend/requirements.lock" \
-            "$UPSTREAM_DIRECTORY/backend/requirements-slim.txt" \
-            "$UPSTREAM_DIRECTORY/backend/requirements-slim.lock" \
-            "$UPSTREAM_DIRECTORY/backend/update-locks.sh"
 
       - name: Validate merge conflicts
         if: steps.integration.outputs.branch != ''
