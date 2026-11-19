@@ -1,0 +1,34 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:best-practices", "mergeConfidence:all-badges"],
+	"baseBranchPatterns": ["main"],
+	"addLabels": ["renovate"],
+	"rebaseWhen": "auto",
+	"timezone": "America/Toronto",
+	"minimumReleaseAge": "14 days",
+	"semanticCommits": "enabled",
+	"semanticCommitScope": "deps",
+	"semanticCommitType": "fix",
+	"dependencyDashboard": true,
+	"customManagers": [
+		{
+			"customType": "regex",
+			"managerFilePatterns": ["/^upstream\\.json$/"],
+			"matchStrings": [
+				"\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+			],
+			"depNameTemplate": "open-webui/open-webui",
+			"datasourceTemplate": "github-releases",
+			"versioningTemplate": "semver-extended"
+		}
+	],
+	"packageRules": [
+		{
+			"matchPackageNames": ["open-webui/open-webui"],
+			"allowedVersions": "/^v\\d+\\.\\d+\\.\\d+$/",
+			"semanticCommitScope": "upstream",
+			"addLabels": ["upstream"],
+			"automerge": false
+		}
+	]
+}
