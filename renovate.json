@@ -15,7 +15,9 @@
 		"**/node_modules/**",
 		"**/bower_components/**",
 		"openwebui/backend/requirements*.txt",
-		"openwebui/backend/requirements*.lock"
+		"openwebui/backend/requirements*.lock",
+		"openwebui/pyproject.toml",
+		"openwebui/uv.lock"
 	],
 	"packageRules": [
 		{

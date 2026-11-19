@@ -115,6 +115,7 @@ jobs:
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Merge upstream release
+        id: upstream_merge
         if: steps.integration.outputs.branch != ''
         env:
           VERSION: ${{ steps.upstream.outputs.version }}
@@ -123,16 +124,38 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          PREVIOUS_VERSION=$(jq -er '.version' upstream.json)
+
+          git fetch --no-tags \
+            "https://github.com/$UPSTREAM_REPOSITORY.git" \
+            "refs/tags/$PREVIOUS_VERSION"
+
+          PREVIOUS_COMMIT=$(git rev-parse 'FETCH_HEAD^{commit}')
+
           git fetch --no-tags \
             "https://github.com/$UPSTREAM_REPOSITORY.git" \
             "refs/tags/$VERSION"
 
           UPSTREAM_COMMIT=$(git rev-parse 'FETCH_HEAD^{commit}')
 
+          # Compare upstream manifests before removing them from our import.
+          MANIFEST_CHANGES=$(git diff --name-only "$PREVIOUS_COMMIT" "$UPSTREAM_COMMIT" -- \
+            pyproject.toml uv.lock \
+            backend/requirements.txt backend/requirements.lock \
+            backend/requirements-slim.txt backend/requirements-slim.lock |
+            paste -sd ',' -)
+
+          echo "previous_version=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT"
+          echo "manifest_changes=${MANIFEST_CHANGES:-none}" >> "$GITHUB_OUTPUT"
+          echo "Upstream dependency manifests changed: ${MANIFEST_CHANGES:-none}"
+          git diff "$PREVIOUS_COMMIT" "$UPSTREAM_COMMIT" -- pyproject.toml
+
           git switch -c "$BRANCH"
 
+          # Do not follow our manifest moves into the repository root.
           if ! git merge --no-commit --no-ff \
             -s ort \
+            -Xno-renames \
             -Xsubtree="$UPSTREAM_DIRECTORY" \
             "$UPSTREAM_COMMIT"; then
 
@@ -151,13 +174,15 @@ jobs:
 
           git rev-parse --verify MERGE_HEAD
 
-      - name: Remove legacy dependency manifests
+      - name: Remove upstream dependency manifests
         if: steps.integration.outputs.branch != ''
         run: |
-          # Canchat Labs uses pyproject.toml and uv.lock exclusively.
-          # Remove legacy manifests and resolve their merge conflicts.
+          # Canchat Labs owns the root pyproject.toml and uv.lock.
+          # Remove imported Python manifests and resolve their merge conflicts.
 
           git rm -f --ignore-unmatch -- \
+            "$UPSTREAM_DIRECTORY/pyproject.toml" \
+            "$UPSTREAM_DIRECTORY/uv.lock" \
             "$UPSTREAM_DIRECTORY/backend/requirements.txt" \
             "$UPSTREAM_DIRECTORY/backend/requirements.lock" \
             "$UPSTREAM_DIRECTORY/backend/requirements-slim.txt" \
@@ -223,6 +248,8 @@ jobs:
           GH_TOKEN: ${{ steps.create_token.outputs.token }}
           VERSION: ${{ steps.upstream.outputs.version }}
           BRANCH: ${{ steps.integration.outputs.branch }}
+          PREVIOUS_VERSION: ${{ steps.upstream_merge.outputs.previous_version }}
+          MANIFEST_CHANGES: ${{ steps.upstream_merge.outputs.manifest_changes }}
         run: |
           gh pr create \
             --base main \
@@ -230,8 +257,13 @@ jobs:
             --title "fix(upstream): import Open WebUI $VERSION" \
             --body "Imports Open WebUI $VERSION into CanChat Labs.
 
-          Legacy Python dependency manifests have been removed.
-          CanChat Labs uses pyproject.toml and uv.lock.
+          Upstream Python dependency manifests have been removed.
+          CanChat Labs manages dependencies in the root pyproject.toml and uv.lock.
+
+          Changed upstream dependency manifests: $MANIFEST_CHANGES
+
+          Review upstream dependency changes and reconcile them with our root manifests before merging:
+          https://github.com/$UPSTREAM_REPOSITORY/compare/$PREVIOUS_VERSION...$VERSION
 
           Upstream release:
           https://github.com/$UPSTREAM_REPOSITORY/releases/tag/$VERSION"

@@ -122,7 +122,7 @@ RUN groupadd --gid 65532 nonroot && \
 
 # Python dependencies
 
-COPY openwebui/pyproject.toml openwebui/uv.lock openwebui/package.json openwebui/README.md openwebui/LICENSE openwebui/hatch_build.py /app/
+COPY pyproject.toml uv.lock /app/
 
 RUN --mount=from=uv,source=/uv,target=/tmp/uv \
     /tmp/uv sync --project /app --locked --no-dev --no-install-project \

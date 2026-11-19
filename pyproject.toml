@@ -1,10 +1,7 @@
 [project]
-name = "open-webui"
-description = "Open WebUI"
-authors = [
-    { name = "Timothy Jaeryang Baek", email = "tim@openwebui.com" }
-]
-license = { file = "LICENSE" }
+name = "canchat-labs"
+version = "0.0.0"
+description = "Canchat Labs container dependency environment"
 dependencies = [
     "fastapi==0.136.3",
     "uvicorn[standard]==0.54.0",
@@ -83,18 +80,7 @@ dependencies = [
     "opentelemetry-instrumentation-aiohttp-client==0.66b2",
     "opentelemetry-instrumentation-system-metrics==0.66b2",
 ]
-readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dynamic = ["version"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "License :: Other/Proprietary License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Communications :: Chat",
-    "Topic :: Multimedia",
-]
 
 [project.optional-dependencies]
 # Shared by the full CPU and CUDA profiles.
@@ -138,7 +124,7 @@ full = [
     "oracledb==3.4.2",
     "av==14.0.1", # Caution: Set due to FATAL FIPS SELFTEST FAILURE, see discussion https://github.com/open-webui/open-webui/discussions/15720
     "colbert-ai==0.2.22",
-    "open-webui[unstructured]",
+    "canchat-labs[unstructured]",
 ]
 
 slim = [
@@ -148,14 +134,14 @@ slim = [
 ]
 
 cpu = [
-    "open-webui[full]",
+    "canchat-labs[full]",
     "torch<=2.9.1", # Keep the Raspberry Pi compatibility cap.
     "torchvision",
     "torchaudio",
 ]
 
 cuda = [
-    "open-webui[full]",
+    "canchat-labs[full]",
     "torch<=2.9.1",
     "torchvision",
     "torchaudio",
@@ -171,45 +157,7 @@ unstructured = [
     "unstructured==0.22.31",
     "preshed==3.0.13", # keep pinned: transitive via unstructured -> spaCy; 3.0.14 breaks HTML extraction (web loader)
 ]
-all = ["open-webui[cpu]"]
-
-[project.scripts]
-open-webui = "open_webui:app"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.rye]
-managed = true
-dev-dependencies = []
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.version]
-path = "package.json"
-pattern = '"version":\s*"(?P<version>[^"]+)"'
-
-[tool.hatch.build.hooks.custom]  # keep this for reading hooks from `hatch_build.py`
-
-[tool.hatch.build.targets.wheel]
-sources = ["backend"]
-exclude = [
-    ".dockerignore",
-    ".gitignore",
-    ".webui_secret_key",
-    "dev.sh",
-    "requirements.txt",
-    "requirements.lock",
-    "requirements-slim.lock",
-    "update-locks.sh",
-    "start.sh",
-    "start_windows.bat",
-    "webui.db",
-    "chroma.sqlite3",
-]
-force-include = { "CHANGELOG.md" = "open_webui/CHANGELOG.md", build = "open_webui/frontend" }
+all = ["canchat-labs[cpu]"]
 
 [tool.codespell]
 # Ref: https://github.com/codespell-project/codespell#using-a-config-file
@@ -255,6 +203,7 @@ mccabe.max-complexity = 10
 pydocstyle.convention = "google"
 
 [tool.uv]
+package = false
 required-version = "==0.12.10"
 
 required-environments = [

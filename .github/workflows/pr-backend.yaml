@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "openwebui/**"
+      - "pyproject.toml"
+      - "uv.lock"
       - ".github/workflows/pr-backend.yaml"
   workflow_dispatch:
 
@@ -35,22 +37,22 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version-file: openwebui/pyproject.toml
+          python-version-file: pyproject.toml
 
       - name: Install uv
         uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          version-file: openwebui/pyproject.toml
+          version-file: pyproject.toml
 
       - name: Validate uv lockfile
-        run: uv lock --check
+        run: uv lock --project .. --check
 
       - name: Verify Python formatting
-        run: uv run --locked --only-dev ruff format --check .
+        run: uv run --project .. --locked --only-dev ruff format --check .
 
       - name: Detect Python logic errors
         run: >
-          uv run --locked --only-dev ruff check
+          uv run --project .. --locked --only-dev ruff check
           --select=F
           --ignore=F401,F403,F405,F541,F811,F841
           --output-format=github

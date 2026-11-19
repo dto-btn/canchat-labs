@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "openwebui/**"
+      - "pyproject.toml"
+      - "uv.lock"
       - ".github/workflows/pr-regression.yaml"
   workflow_dispatch:
 
@@ -39,35 +41,35 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version-file: openwebui/pyproject.toml
+          python-version-file: pyproject.toml
 
       - name: Install uv
         uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          version-file: openwebui/pyproject.toml
+          version-file: pyproject.toml
 
       - name: Validate dependency lock
-        run: uv lock --project openwebui --check
+        run: uv lock --project . --check
 
       - name: Install locked backend dependencies
         run: >-
-          uv sync --project openwebui
+          uv sync --project .
           --locked --no-dev --no-install-project --extra cpu
 
       - name: Install regression test dependencies
         run: |
-          uv export --project openwebui --locked --no-dev --extra cpu \
+          uv export --project . --locked --no-dev --extra cpu \
             --no-hashes --no-emit-project --output-file "$RUNNER_TEMP/backend-constraints.txt"
 
-          uv pip install --python openwebui/.venv/bin/python \
+          uv pip install --python .venv/bin/python \
             --constraint "$RUNNER_TEMP/backend-constraints.txt" \
             pip -e "./regression-tests[postgres]"
 
       - name: Install spaCy language model
-        run: openwebui/.venv/bin/python -m spacy download en_core_web_sm
+        run: .venv/bin/python -m spacy download en_core_web_sm
 
       - name: Validate installed dependencies
-        run: uv pip check --python openwebui/.venv/bin/python
+        run: uv pip check --python .venv/bin/python
 
       - name: Run regression tests
         working-directory: regression-tests
@@ -79,10 +81,10 @@ jobs:
         run: |
           mkdir -p "$DATA_DIR" "$STATIC_DIR"
 
-          # Canchat Labs uses pyproject.toml and uv.lock as its
+          # Canchat Labs uses the root pyproject.toml and uv.lock as its
           # authoritative dependency manifests. Legacy requirements
           # files are no longer maintained or used for builds.
-          ../openwebui/.venv/bin/python -m pytest unit -q \
+          ../.venv/bin/python -m pytest unit -q \
             --ignore=unit/config/test_dependency_manifests.py \
             --junitxml=results.xml \
             --html=report.html \

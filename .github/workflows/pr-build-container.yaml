@@ -30,8 +30,8 @@ jobs:
         shell: bash
         run: |
           NODE_VERSION=$(cat .nvmrc)
-          PYTHON_VERSION=$(sed -nE 's/^requires-python = ">=([0-9]+\.[0-9]+),<[^"]+"$/\1/p' openwebui/pyproject.toml)
-          UV_VERSION=$(sed -nE 's/^required-version = "==([0-9]+\.[0-9]+\.[0-9]+)"$/\1/p' openwebui/pyproject.toml)
+          PYTHON_VERSION=$(sed -nE 's/^requires-python = ">=([0-9]+\.[0-9]+),<[^"]+"$/\1/p' pyproject.toml)
+          UV_VERSION=$(sed -nE 's/^required-version = "==([0-9]+\.[0-9]+\.[0-9]+)"$/\1/p' pyproject.toml)
 
           test -n "$NODE_VERSION"
           test -n "$PYTHON_VERSION"

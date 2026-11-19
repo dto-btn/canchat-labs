@@ -7,6 +7,8 @@ on:
     paths:
       - "containers/**"
       - "openwebui/**"
+      - "pyproject.toml"
+      - "uv.lock"
       - ".nvmrc"
       - ".dockerignore"
       - "CHANGELOG.md"
