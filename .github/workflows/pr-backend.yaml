@@ -1,0 +1,62 @@
+name: Backend CI Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "openwebui/**"
+      - ".python-version"
+      - ".github/workflows/pr-backend.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: openwebui
+
+jobs:
+  backend:
+    name: Backend Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version-file: openwebui/pyproject.toml
+
+      - name: Install uv
+        run: pip install uv==0.12.10
+
+      - name: Validate uv lockfile
+        run: uv lock --check
+
+      - name: Verify Python formatting
+        run: uv run --locked --only-dev ruff format --check .
+
+      - name: Detect Python logic errors
+        run: >
+          uv run --locked --only-dev ruff check
+          --select=F
+          --ignore=F401,F403,F405,F541,F811,F841
+          --output-format=github
+          .
+
+      - name: Regenerate requirements lockfiles
+        run: bash backend/update-locks.sh
+
+      - name: Verify requirements lockfiles
+        run: git diff --exit-code -- backend/requirements.lock backend/requirements-slim.lock
