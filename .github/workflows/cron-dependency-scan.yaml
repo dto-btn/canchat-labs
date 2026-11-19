@@ -45,3 +45,4 @@ jobs:
           renovate-version: 44.165.0@sha256:df00749d4568b488c6d50ca6ff031cea257ff490d20a846db03831a1a7359601
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_ALLOWED_COMMANDS: '["^bash openwebui/backend/update-locks\\.sh$"]'
