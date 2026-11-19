@@ -9,26 +9,5 @@
 	"semanticCommits": "enabled",
 	"semanticCommitScope": "deps",
 	"semanticCommitType": "fix",
-	"dependencyDashboard": true,
-	"customManagers": [
-		{
-			"customType": "regex",
-			"managerFilePatterns": ["/^upstream\\.json$/"],
-			"matchStrings": [
-				"\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
-			],
-			"depNameTemplate": "open-webui/open-webui",
-			"datasourceTemplate": "github-releases",
-			"versioningTemplate": "semver-extended"
-		}
-	],
-	"packageRules": [
-		{
-			"matchPackageNames": ["open-webui/open-webui"],
-			"allowedVersions": "/^v\\d+\\.\\d+\\.\\d+$/",
-			"semanticCommitScope": "upstream",
-			"addLabels": ["upstream"],
-			"automerge": false
-		}
-	]
+	"dependencyDashboard": true
 }
