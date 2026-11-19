@@ -1,33 +1,367 @@
-"packageRules": [
-    {
-        "groupName": "GitHub Actions",
-        "matchManagers": ["github-actions"],
-        "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"]
-    },
-    {
-        "groupName": "Svelte framework",
-        "matchManagers": ["npm"],
-        "matchPackageNames": [
-            "svelte",
-            "@sveltejs/*",
-            "svelte-check",
-            "vite",
-            "vite-plugin-*"
-        ],
-        "matchUpdateTypes": ["minor", "patch"]
-    },
-    {
-        "groupName": "Database and caching",
-        "matchDatasources": ["pypi"],
-        "matchPackageNames": [
-            "sqlalchemy",
-            "alembic",
-            "psycopg*",
-            "redis",
-            "hiredis",
-            "pymysql",
-            "aiosqlite"
-        ],
-        "matchUpdateTypes": ["minor", "patch"]
-    }
-]
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:best-practices", "mergeConfidence:all-badges"],
+	"baseBranchPatterns": ["main"],
+	"addLabels": ["renovate"],
+	"rebaseWhen": "auto",
+	"timezone": "America/Toronto",
+	"minimumReleaseAge": "14 days",
+	"semanticCommits": "enabled",
+	"semanticCommitScope": "deps",
+	"semanticCommitType": "fix",
+	"dependencyDashboard": true,
+	"groupSingleUpdates": true,
+	"packageRules": [
+		{
+			"groupName": "GitHub Actions",
+			"groupSlug": "github-actions",
+			"matchManagers": ["github-actions"],
+			"matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"]
+		},
+		{
+			"groupName": "Container images",
+			"groupSlug": "container-images",
+			"matchManagers": ["dockerfile", "docker-compose"],
+			"matchDatasources": ["docker"],
+			"matchPackageNames": [
+				"!node",
+				"!python",
+				"!mcr.microsoft.com/playwright"
+			],
+			"matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"]
+		},
+		{
+			"groupName": "Svelte framework",
+			"groupSlug": "svelte",
+			"matchManagers": ["npm"],
+			"matchPackageNames": [
+				"svelte",
+				"@sveltejs/*",
+				"svelte-check",
+				"vite",
+				"vite-plugin-*",
+				"typescript",
+				"tslib"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "CSS and styling",
+			"groupSlug": "css",
+			"matchManagers": ["npm"],
+			"matchPackageNames": [
+				"tailwindcss",
+				"@tailwindcss/*",
+				"postcss",
+				"sass-embedded"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Code quality",
+			"groupSlug": "code-quality",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"eslint",
+				"eslint-*",
+				"@typescript-eslint/*",
+				"prettier",
+				"prettier-*",
+				"black",
+				"ruff"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Testing",
+			"groupSlug": "testing",
+			"matchPackageNames": [
+				"cypress",
+				"vitest",
+				"playwright",
+				"@playwright/*",
+				"pytest",
+				"pytest-*",
+				"mcr.microsoft.com/playwright"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "UI components",
+			"groupSlug": "ui-components",
+			"matchManagers": ["npm"],
+			"matchPackageNames": [
+				"bits-ui",
+				"svelte-sonner",
+				"svelte-confetti",
+				"@floating-ui/*",
+				"@xyflow/*",
+				"iconoir",
+				"heroicons",
+				"focus-trap",
+				"sortablejs",
+				"panzoom",
+				"tippy.js",
+				"alpinejs"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Rich text and code editors",
+			"groupSlug": "editors",
+			"matchManagers": ["npm"],
+			"matchPackageNames": [
+				"@tiptap/*",
+				"@codemirror/*",
+				"codemirror",
+				"codemirror-*",
+				"prosemirror-*",
+				"yjs",
+				"y-prosemirror",
+				"y-protocols",
+				"shiki",
+				"lowlight",
+				"highlight.js",
+				"marked",
+				"turndown",
+				"turndown-*",
+				"@joplin/turndown-plugin-gfm",
+				"dompurify",
+				"katex"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Internationalization",
+			"groupSlug": "i18n",
+			"matchManagers": ["npm"],
+			"matchPackageNames": [
+				"i18next",
+				"i18next-*"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Charts and visualization",
+			"groupSlug": "visualization",
+			"matchManagers": ["npm"],
+			"matchPackageNames": [
+				"chart.js",
+				"mermaid",
+				"vega",
+				"vega-*",
+				"three",
+				"@types/three",
+				"@pixiv/*",
+				"leaflet"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Authentication and cryptography",
+			"groupSlug": "authentication",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"authlib",
+				"cryptography",
+				"pyjwt",
+				"pyotp",
+				"bcrypt",
+				"argon2-cffi",
+				"joserfc",
+				"itsdangerous",
+				"ldap3",
+				"starsessions",
+				"@azure/msal-browser",
+				"js-sha256"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Backend API",
+			"groupSlug": "backend-api",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"fastapi",
+				"starlette",
+				"starlette-*",
+				"pydantic",
+				"uvicorn",
+				"python-multipart",
+				"python-socketio",
+				"socket.io-client",
+				"eventsource-parser",
+				"httpx",
+				"httpx2",
+				"aiohttp",
+				"aiodns",
+				"aiofiles",
+				"requests",
+				"orjson",
+				"asgiref",
+				"brotli",
+				"brotlicffi",
+				"validators",
+				"undici"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Databases and caching",
+			"groupSlug": "databases",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"sqlalchemy",
+				"alembic",
+				"psycopg*",
+				"redis",
+				"hiredis",
+				"pymysql",
+				"aiosqlite",
+				"aiocache",
+				"mariadb",
+				"oracledb",
+				"sql.js"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "AI provider SDKs",
+			"groupSlug": "ai-sdks",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"openai",
+				"anthropic",
+				"langchain",
+				"langchain-*",
+				"mcp",
+				"@modelcontextprotocol/*",
+				"tiktoken"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Machine learning",
+			"groupSlug": "machine-learning",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"transformers",
+				"@huggingface/transformers",
+				"@mediapipe/*",
+				"sentence-transformers",
+				"sentencepiece",
+				"accelerate",
+				"numpy",
+				"onnxruntime",
+				"torch",
+				"torchvision",
+				"einops",
+				"colbert-ai",
+				"preshed"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Vector databases and search",
+			"groupSlug": "vector-search",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"pgvector",
+				"chromadb",
+				"pymilvus",
+				"qdrant-client",
+				"weaviate-client",
+				"pinecone",
+				"elasticsearch",
+				"opensearch-py",
+				"azure-search-documents",
+				"rank-bm25",
+				"ddgs",
+				"fuse.js"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Document processing",
+			"groupSlug": "document-processing",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"pypdf",
+				"python-docx",
+				"docx2txt",
+				"python-pptx",
+				"unstructured",
+				"msoffcrypto-tool",
+				"markdown",
+				"beautifulsoup4",
+				"lxml",
+				"pypandoc",
+				"pandas",
+				"pyarrow",
+				"openpyxl",
+				"pyxlsb",
+				"xlrd",
+				"xlsx",
+				"mammoth",
+				"pdfjs-dist",
+				"docx-preview",
+				"jspdf",
+				"jszip",
+				"file-saver",
+				"@xmldom/xmldom",
+				"rapidocr",
+				"pillow",
+				"opencv-python-headless",
+				"chardet",
+				"ftfy"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Audio and video",
+			"groupSlug": "audio-video",
+			"matchDatasources": ["npm", "pypi"],
+			"matchPackageNames": [
+				"faster-whisper",
+				"soundfile",
+				"av",
+				"pydub",
+				"kokoro-js",
+				"youtube-transcript-api"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Cloud integrations",
+			"groupSlug": "cloud-integrations",
+			"matchDatasources": ["pypi"],
+			"matchPackageNames": [
+				"azure-identity",
+				"azure-storage-blob",
+				"azure-ai-documentintelligence",
+				"boto3",
+				"botocore",
+				"google-cloud-storage",
+				"googleapis-common-protos"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Observability",
+			"groupSlug": "observability",
+			"matchDatasources": ["pypi"],
+			"matchPackageNames": [
+				"opentelemetry-*",
+				"loguru",
+				"psutil"
+			],
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "Rust dependencies",
+			"groupSlug": "rust-dependencies",
+			"matchManagers": ["cargo"],
+			"matchUpdateTypes": ["minor", "patch"]
+		}
+	]
+}
