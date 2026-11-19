@@ -365,19 +365,12 @@
 		},
 		{
 			"description": "Regenerate Python container dependency lockfiles",
-			"matchDatasources": ["pypi"],
 			"matchFileNames": [
 				"openwebui/pyproject.toml",
 				"openwebui/backend/requirements*.txt"
 			],
-			"constraints": {
-				"uv": "0.12.10",
-				"python": "3.12"
-			},
 			"postUpgradeTasks": {
-				"commands": [
-					"bash openwebui/backend/update-locks.sh"
-				],
+				"commands": ["bash openwebui/backend/update-locks.sh"],
 				"fileFilters": [
 					"openwebui/backend/requirements.lock",
 					"openwebui/backend/requirements-slim.lock"
