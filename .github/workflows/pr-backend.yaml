@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "openwebui/**"
-      - ".python-version"
       - ".github/workflows/pr-backend.yaml"
   workflow_dispatch:
 
