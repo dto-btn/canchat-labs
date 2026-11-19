@@ -244,3 +244,6 @@ flake8-import-conventions.aliases = { datetime = "dt" }
 flake8-quotes.inline-quotes = "single"
 mccabe.max-complexity = 10
 pydocstyle.convention = "google"
+
+[tool.uv]
+required-version = "==0.12.10"

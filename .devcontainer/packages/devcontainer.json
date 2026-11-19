@@ -25,8 +25,8 @@
     "ONNXRUNTIME_NODE_INSTALL_CUDA": "skip",
     "CYPRESS_INSTALL_BINARY": "0"
   },
-  "postCreateCommand": "bash -c 'source \"$NVM_DIR/nvm.sh\" && nvm install && nvm alias default \"$(cat .nvmrc)\" && cd openwebui && uv venv --allow-existing'",
-  "customizations": {
+"postCreateCommand": "bash -c 'source \"$NVM_DIR/nvm.sh\" --no-use && nvm install && nvm alias default \"$(cat .nvmrc)\" && cd openwebui && uv venv --allow-existing'",
+"customizations": {
     "vscode": {
       "extensions": [
         "esbenp.prettier-vscode",

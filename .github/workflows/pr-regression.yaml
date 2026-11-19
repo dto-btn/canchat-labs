@@ -1,0 +1,87 @@
+name: Regression CI Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "openwebui/**"
+      - ".github/workflows/pr-regression.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    name: Backend Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Checkout upstream test suite
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: open-webui/tests
+          ref: afcc5e1220311fc00e02da33121f72996bfdc80e
+          path: regression-tests
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version-file: openwebui/pyproject.toml
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version-file: openwebui/pyproject.toml
+
+      - name: Install CPU-only PyTorch
+        run: >
+          uv pip install --system
+          "torch<=2.9.1"
+          --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install backend and test dependencies
+        run: >
+          uv pip install --system
+          -r openwebui/backend/requirements.txt
+          -e "./regression-tests[postgres]"
+
+      - name: Install spaCy language model
+        run: python -m spacy download en_core_web_sm
+
+      - name: Run regression tests
+        working-directory: regression-tests
+        env:
+          OPEN_WEBUI_SOURCE_DIR: ${{ github.workspace }}/openwebui/backend
+          DATA_DIR: ${{ runner.temp }}/owui-data
+          STATIC_DIR: ${{ runner.temp }}/owui-static
+          WEBUI_SECRET_KEY: ci-regression-key
+        run: |
+          mkdir -p "$DATA_DIR" "$STATIC_DIR"
+
+          python -m pytest unit -q \
+            --junitxml=results.xml \
+            --html=report.html \
+            --self-contained-html
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: regression-test-results
+          path: |
+            regression-tests/results.xml
+            regression-tests/report.html
+          retention-days: 14
