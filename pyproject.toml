@@ -90,9 +90,9 @@ full = [
     "chromadb==1.5.9",
     "weaviate-client==4.20.3",
     "opensearch-py==3.2.0",
-    "transformers==5.10.1",
+    "transformers==5.22.1",
     "sentence-transformers==5.6.0",
-    "accelerate==1.13.0",
+    "accelerate==1.15.0",
     "pyarrow==23.0.1",
     "einops==0.8.2",
     "pypdf==6.21.4",
@@ -105,11 +105,11 @@ full = [
     "openpyxl==3.1.5",
     "pyxlsb==1.0.10",
     "xlrd==2.0.2",
-    "sentencepiece==0.2.1",
+    "sentencepiece==0.2.3",
     "soundfile==0.13.1",
     "opencv-python-headless==4.13.0.92",
     "rapidocr==3.10.0",
-    "onnxruntime==1.26.0",
+    "onnxruntime==1.31.1",
     "faster-whisper==1.2.1",
     "pydub==0.25.1",
     "ddgs==9.14.4",
@@ -128,7 +128,7 @@ full = [
 ]
 
 slim = [
-    "numpy==2.4.6",
+    "numpy==2.5.4",
     "typer==0.25.1",
     "python-dateutil==2.9.0.post0",
 ]
@@ -136,15 +136,15 @@ slim = [
 cpu = [
     "canchat-labs[full]",
     "torch<=2.13.0", # Keep the Raspberry Pi compatibility cap.
-    "torchvision",
-    "torchaudio",
+    "torchvision==0.24.1",
+    "torchaudio==2.9.1",
 ]
 
 cuda = [
     "canchat-labs[full]",
     "torch<=2.13.0",
-    "torchvision",
-    "torchaudio",
+    "torchvision==0.24.1",
+    "torchaudio==2.9.1",
 ]
 
 # Retain upstream extra names for compatibility.
@@ -155,7 +155,7 @@ mariadb = [
 ]
 unstructured = [
     "unstructured==0.24.1",
-    "preshed==3.0.13", # keep pinned: transitive via unstructured -> spaCy; 3.0.14 breaks HTML extraction (web loader)
+    "preshed==3.0.15", # keep pinned: transitive via unstructured -> spaCy; 3.0.14 breaks HTML extraction (web loader)
 ]
 all = ["canchat-labs[cpu]"]
 
