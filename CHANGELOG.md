@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/dto-btn/canchat-labs/compare/v0.1.1...v0.1.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency anthropic to v0.87.0 [security] ([#14](https://github.com/dto-btn/canchat-labs/issues/14)) ([5793296](https://github.com/dto-btn/canchat-labs/commit/57932968b698e7920804fcfb5543c878b3fcf33a))
+* **deps:** update dependency pypdf to v6.21.4 [security] ([#12](https://github.com/dto-btn/canchat-labs/issues/12)) ([58b49e8](https://github.com/dto-btn/canchat-labs/commit/58b49e82c56a4d0fcb43b17c1ddb10a783c57cf9))
+
 ## [0.1.1](https://github.com/dto-btn/canchat-labs/compare/v0.1.0...v0.1.1) (2026-11-19)
 
 
