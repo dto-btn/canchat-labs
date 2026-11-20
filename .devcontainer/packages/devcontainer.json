@@ -25,9 +25,7 @@
     "ONNXRUNTIME_NODE_INSTALL_CUDA": "skip",
     "CYPRESS_INSTALL_BINARY": "0"
   },
-"postCreateCommand": "bash -c 'source \"$NVM_DIR/nvm.sh\" --no-use && nvm install && nvm alias default \"$(cat .nvmrc)\" && uv venv --allow-existing'",
-"customizations": {
-    "vscode": {
+"postCreateCommand": "bash -c 'source \"$NVM_DIR/nvm.sh\" --no-use && nvm install && nvm alias default \"$(cat .nvmrc)\" && npm install -g \"npm@$(node -p \"require(\\\"./package.json\\\").engines.npm\")\" && uv venv --allow-existing'"    "vscode": {
       "extensions": [
         "esbenp.prettier-vscode",
         "ms-python.python",
