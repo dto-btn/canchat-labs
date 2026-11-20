@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/dto-btn/canchat-labs/compare/v0.1.2...v0.1.3) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update ai provider sdks ([#32](https://github.com/dto-btn/canchat-labs/issues/32)) ([76ad6cd](https://github.com/dto-btn/canchat-labs/commit/76ad6cd68e06cb894e6b365c932a6e7382c6d738))
+* **deps:** update dependency pycrdt to v0.14.13 ([#33](https://github.com/dto-btn/canchat-labs/issues/33)) ([b1dd89f](https://github.com/dto-btn/canchat-labs/commit/b1dd89f15e17674a984d7f42799ee54d4bbb520b))
+
 ## [0.1.2](https://github.com/dto-btn/canchat-labs/compare/v0.1.1...v0.1.2) (2026-11-20)
 
 
