@@ -154,7 +154,7 @@ mariadb = [
     "mariadb==1.1.14",
 ]
 unstructured = [
-    "unstructured==0.22.31",
+    "unstructured==0.24.1",
     "preshed==3.0.13", # keep pinned: transitive via unstructured -> spaCy; 3.0.14 breaks HTML extraction (web loader)
 ]
 all = ["canchat-labs[cpu]"]
