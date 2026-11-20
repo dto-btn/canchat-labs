@@ -14,3 +14,13 @@ openwebui/backend/data
 openwebui/old.github
 openwebui/build
 openwebui/docs
+
+# Ignore unmanaged upstream dependency manifests
+openwebui/package.json
+openwebui/package-lock.json
+openwebui/.npmrc
+openwebui/.nvmrc
+openwebui/pyproject.toml
+openwebui/uv.lock
+openwebui/backend/requirements*.txt
+openwebui/backend/requirements*.lock

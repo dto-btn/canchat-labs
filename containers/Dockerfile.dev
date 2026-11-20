@@ -29,9 +29,13 @@ ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
     CYPRESS_INSTALL_BINARY=0 \
     NODE_OPTIONS=--max-old-space-size=12288
 
-COPY openwebui/package.json openwebui/package-lock.json ./
+# Install centrally managed frontend dependencies
+
+COPY package.json package-lock.json .npmrc ./
 
 RUN npm ci --force
+
+# Copy application source
 
 COPY openwebui/ ./
 
@@ -120,7 +124,7 @@ RUN groupadd --gid 65532 nonroot && \
         --shell /usr/sbin/nologin \
         nonroot
 
-# Python dependencies
+# Install centrally managed Python dependencies
 
 COPY pyproject.toml uv.lock /app/
 
@@ -155,7 +159,7 @@ USER 65532:65532
 RUN python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" && \
     python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['AUXILIARY_EMBEDDING_MODEL'], device='cpu')" && \
     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])" && \
-    python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])"
+    python -c "import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])"
 
 ENV WEBUI_BUILD_HASH=${BUILD_HASH}
 
