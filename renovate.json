@@ -14,7 +14,6 @@
 	"ignorePaths": [
 		"**/node_modules/**",
 		"**/bower_components/**",
-		"openwebui/**",
 		"openwebui/backend/requirements*.txt",
 		"openwebui/backend/requirements*.lock",
 		"openwebui/pyproject.toml",
@@ -265,13 +264,37 @@
 				"accelerate",
 				"numpy",
 				"onnxruntime",
-				"torch",
-				"torchvision",
 				"einops",
 				"colbert-ai",
 				"preshed"
 			],
 			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"groupName": "PyTorch",
+			"groupSlug": "pytorch",
+			"matchDatasources": ["pypi"],
+			"matchPackageNames": [
+				"torch",
+				"torchvision",
+				"torchaudio"
+			],
+			"matchUpdateTypes": ["major", "minor", "patch"]
+		},
+		{
+			"description": "Preserve Raspberry Pi compatibility",
+			"matchDatasources": ["pypi"],
+			"matchPackageNames": [
+				"torch",
+				"torchaudio"
+			],
+			"allowedVersions": "<=2.9.1"
+		},
+		{
+			"description": "Preserve TorchVision compatibility with PyTorch 2.9.1",
+			"matchDatasources": ["pypi"],
+			"matchPackageNames": ["torchvision"],
+			"allowedVersions": "<=0.24.1"
 		},
 		{
 			"groupName": "Vector databases and search",
