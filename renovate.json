@@ -14,6 +14,8 @@
 	"ignorePaths": [
 		"**/node_modules/**",
 		"**/bower_components/**",
+		"openwebui/package.json",
+		"openwebui/package-lock.json",
 		"openwebui/backend/requirements*.txt",
 		"openwebui/backend/requirements*.lock",
 		"openwebui/pyproject.toml",
