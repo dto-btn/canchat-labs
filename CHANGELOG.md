@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.4](https://github.com/dto-btn/canchat-labs/compare/v0.1.3...v0.1.4) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency black to v26.10.1 [security] ([#16](https://github.com/dto-btn/canchat-labs/issues/16)) ([84c5a90](https://github.com/dto-btn/canchat-labs/commit/84c5a906e22653581302c93eb3467a68cafa272a))
+* **deps:** update dependency cryptography to v50 [security] ([#25](https://github.com/dto-btn/canchat-labs/issues/25)) ([01f3448](https://github.com/dto-btn/canchat-labs/commit/01f3448fac03299996ce0068250b69eec401def0))
+* **deps:** update dependency joserfc to v1.7.6 [security] ([#11](https://github.com/dto-btn/canchat-labs/issues/11)) ([516cc26](https://github.com/dto-btn/canchat-labs/commit/516cc267e5750f439cbec00fcf3d86c9a2e4703e))
+* **deps:** update dependency pyjwt to v2.15.0 [security] ([#18](https://github.com/dto-btn/canchat-labs/issues/18)) ([cc18e0b](https://github.com/dto-btn/canchat-labs/commit/cc18e0b5159ab02cbf8d577078040028b010aa0c))
+* **deps:** update dependency transformers to v5.10.1 [security] ([#20](https://github.com/dto-btn/canchat-labs/issues/20)) ([d2eb63a](https://github.com/dto-btn/canchat-labs/commit/d2eb63a1f3cf8f992386c422d7408fcf3be8caab))
+* **deps:** update dependency unstructured to v0.24.1 [security] ([#21](https://github.com/dto-btn/canchat-labs/issues/21)) ([5ad7c68](https://github.com/dto-btn/canchat-labs/commit/5ad7c68b21087ef7b06029160be0d10106d6dfc6))
+
+
+### Maintenance
+
+* **deps:** update dependency torch to &lt;=2.13.0 [security] ([#29](https://github.com/dto-btn/canchat-labs/issues/29)) ([f578a43](https://github.com/dto-btn/canchat-labs/commit/f578a4335db0c044b3f9d57c1413e45cf6015812))
+
 ## [0.1.3](https://github.com/dto-btn/canchat-labs/compare/v0.1.2...v0.1.3) (2026-11-20)
 
 
