@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.5](https://github.com/dto-btn/canchat-labs/compare/v0.1.4...v0.1.5) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency authlib to v1.9.1 [security] ([#15](https://github.com/dto-btn/canchat-labs/issues/15)) ([8fb7ba8](https://github.com/dto-btn/canchat-labs/commit/8fb7ba8f366378eb8ac673181cb764e59d27fcf1))
+* **deps:** update dependency sentence-transformers to v5.6.0 [security] ([#19](https://github.com/dto-btn/canchat-labs/issues/19)) ([8bc840f](https://github.com/dto-btn/canchat-labs/commit/8bc840f93ed4bc7af81616577d80d171cbf2f24a))
+* **deps:** update machine learning ([#34](https://github.com/dto-btn/canchat-labs/issues/34)) ([3062a1d](https://github.com/dto-btn/canchat-labs/commit/3062a1d0cc7c8dd6ef849e40f4d2522d45613975))
+* **deps:** update machine learning ([#45](https://github.com/dto-btn/canchat-labs/issues/45)) ([e52301a](https://github.com/dto-btn/canchat-labs/commit/e52301a0c4422aa4613b62e5b40e9895d1dd12dd))
+
 ## [0.1.4](https://github.com/dto-btn/canchat-labs/compare/v0.1.3...v0.1.4) (2026-11-20)
 
 
