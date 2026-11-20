@@ -90,7 +90,7 @@ full = [
     "chromadb==1.5.9",
     "weaviate-client==4.20.3",
     "opensearch-py==3.2.0",
-    "transformers==5.5.4",
+    "transformers==5.10.1",
     "sentence-transformers==5.5.1",
     "accelerate==1.13.0",
     "pyarrow==23.0.1",
