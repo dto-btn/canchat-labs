@@ -44,8 +44,8 @@
 			"matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"]
 		},
 		{
-			"groupName": "Svelte framework",
-			"groupSlug": "svelte",
+			"groupName": "Svelte and Vite tooling",
+			"groupSlug": "svelte-vite",
 			"matchManagers": ["npm"],
 			"matchPackageNames": [
 				"svelte",
@@ -53,10 +53,13 @@
 				"svelte-check",
 				"vite",
 				"vite-plugin-*",
+				"@vitejs/*",
+				"vitest",
+				"@vitest/*",
 				"typescript",
 				"tslib"
 			],
-			"matchUpdateTypes": ["minor", "patch"]
+			"matchUpdateTypes": ["major", "minor", "patch"]
 		},
 		{
 			"groupName": "CSS and styling",
