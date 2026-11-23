@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.1.5](https://github.com/dto-btn/canchat-labs/compare/v0.1.4...v0.1.5) (2026-11-23)
+
+
+### Bug Fixes
+
+* broken lock files for missed rebasing PR's ([3fc1786](https://github.com/dto-btn/canchat-labs/commit/3fc17860a0b5c43bbc93c959f9e69447f0611304))
+* **deps:** update ai provider sdks ([#49](https://github.com/dto-btn/canchat-labs/issues/49)) ([1d95bac](https://github.com/dto-btn/canchat-labs/commit/1d95bac0bb6c39fefa028b4dcdec1d986c8abb72))
+* **deps:** update authentication and cryptography ([#51](https://github.com/dto-btn/canchat-labs/issues/51)) ([b7669fc](https://github.com/dto-btn/canchat-labs/commit/b7669fc483e71de475d9ce865c77146e21da3edb))
+* **deps:** update databases and caching ([#7](https://github.com/dto-btn/canchat-labs/issues/7)) ([1b173e2](https://github.com/dto-btn/canchat-labs/commit/1b173e2b8d623ff2b209e82a310c2129177f1a7a))
+* **deps:** update dependency authlib to v1.9.1 [security] ([#15](https://github.com/dto-btn/canchat-labs/issues/15)) ([8fb7ba8](https://github.com/dto-btn/canchat-labs/commit/8fb7ba8f366378eb8ac673181cb764e59d27fcf1))
+* **deps:** update dependency katex to ^0.18.0 [security] ([#17](https://github.com/dto-btn/canchat-labs/issues/17)) ([fbd2ed6](https://github.com/dto-btn/canchat-labs/commit/fbd2ed68755f622c132426dcf5ec71573bcbf394))
+* **deps:** update dependency sentence-transformers to v5.6.0 [security] ([#19](https://github.com/dto-btn/canchat-labs/issues/19)) ([8bc840f](https://github.com/dto-btn/canchat-labs/commit/8bc840f93ed4bc7af81616577d80d171cbf2f24a))
+* **deps:** update machine learning ([#34](https://github.com/dto-btn/canchat-labs/issues/34)) ([3062a1d](https://github.com/dto-btn/canchat-labs/commit/3062a1d0cc7c8dd6ef849e40f4d2522d45613975))
+* **deps:** update machine learning ([#45](https://github.com/dto-btn/canchat-labs/issues/45)) ([e52301a](https://github.com/dto-btn/canchat-labs/commit/e52301a0c4422aa4613b62e5b40e9895d1dd12dd))
+* **deps:** update machine learning ([#56](https://github.com/dto-btn/canchat-labs/issues/56)) ([93f3326](https://github.com/dto-btn/canchat-labs/commit/93f3326f1af14435f6a64b497cbfd68eb4714f65))
+
+
+### Maintenance
+
+* **deps:** update css and styling ([#48](https://github.com/dto-btn/canchat-labs/issues/48)) ([e11832a](https://github.com/dto-btn/canchat-labs/commit/e11832a2085d75c86771b757719b87bcc9c64932))
+* **deps:** update dependency @sveltejs/adapter-static to v3.0.11 [security] ([#52](https://github.com/dto-btn/canchat-labs/issues/52)) ([f2dacaa](https://github.com/dto-btn/canchat-labs/commit/f2dacaa8a3b74cc3226d0d3315e9782c717fe9d6))
+* **deps:** update dependency pyodide to v314.0.8 ([#53](https://github.com/dto-btn/canchat-labs/issues/53)) ([27c4540](https://github.com/dto-btn/canchat-labs/commit/27c4540199812bed4738439392f5e89b65ac3365))
+* **deps:** update github actions ([#57](https://github.com/dto-btn/canchat-labs/issues/57)) ([bca6f7f](https://github.com/dto-btn/canchat-labs/commit/bca6f7f34600c84fbde9b9c167c2b3f58f45902e))
+* **deps:** update internationalization ([#54](https://github.com/dto-btn/canchat-labs/issues/54)) ([abef66c](https://github.com/dto-btn/canchat-labs/commit/abef66c326cd584390ba63f55150e3d1f31ac907))
+
 ## [0.1.4](https://github.com/dto-btn/canchat-labs/compare/v0.1.3...v0.1.4) (2026-11-20)
 
 
