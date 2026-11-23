@@ -33,6 +33,9 @@ ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
 
 COPY package.json package-lock.json .npmrc ./
 
+# Install npm version defined in package.json
+RUN npm install -g "npm@$(node -p "require('./package.json').engines.npm")"
+
 RUN npm ci --force
 
 # Copy application source
