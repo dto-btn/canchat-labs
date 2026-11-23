@@ -22,7 +22,11 @@
 		"openwebui/uv.lock",
 		"openwebui/**/Dockerfile*",
 		"openwebui/**/docker-compose*.y*ml",
-		"openwebui/**/compose*.y*ml"
+		"openwebui/**/compose*.y*ml",
+		"openwebui/crypto/encryption/rust-toolchain.toml",
+		"openwebui/crypto/encryption/Cargo.toml",
+		"openwebui/crypto/encryption/Cargo.lock",
+		"openwebui/crypto/encryption/rust-toolchain.toml"
 	],
 	"packageRules": [
 		{
