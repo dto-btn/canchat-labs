@@ -6,6 +6,7 @@ publish = false
 license = "MIT"
 
 [lib]
+path = "openwebui/crypto/encryption/src/lib.rs"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
