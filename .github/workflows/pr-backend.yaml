@@ -6,6 +6,10 @@ on:
       - main
     paths:
       - "openwebui/**"
+      - ".nvmrc"
+      - ".npmrc"
+      - "package.json"
+      - "package-lock.json"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/pr-backend.yaml"
