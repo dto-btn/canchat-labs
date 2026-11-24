@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.6](https://github.com/dto-btn/canchat-labs/compare/v0.1.5...v0.1.6) (2026-11-24)
+
+
+### Bug Fixes
+
+* **deps:** update rich text and code editors ([#46](https://github.com/dto-btn/canchat-labs/issues/46)) ([e2c4622](https://github.com/dto-btn/canchat-labs/commit/e2c46224902b29f3f67dcafc5293ef4408b805a1))
+
+
+### Maintenance
+
+* **deps:** update svelte and vite tooling ([#61](https://github.com/dto-btn/canchat-labs/issues/61)) ([48e42e4](https://github.com/dto-btn/canchat-labs/commit/48e42e4948fee3badfd15e29eea30aee9aefc6d0))
+
 ## [0.1.5](https://github.com/dto-btn/canchat-labs/compare/v0.1.4...v0.1.5) (2026-11-23)
 
 
