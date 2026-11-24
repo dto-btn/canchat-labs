@@ -80,7 +80,7 @@ dependencies = [
     "opentelemetry-instrumentation-aiohttp-client==0.66b2",
     "opentelemetry-instrumentation-system-metrics==0.66b2",
 ]
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.15,<3.16"
 
 [project.optional-dependencies]
 # Shared by the full CPU and CUDA profiles.
