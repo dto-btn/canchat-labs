@@ -107,7 +107,7 @@ full = [
     "xlrd==2.0.2",
     "sentencepiece==0.2.3",
     "soundfile==0.13.1",
-    "opencv-python-headless==4.13.0.92",
+    "opencv-python-headless==5.0.0.93",
     "rapidocr==3.10.0",
     "onnxruntime==1.31.1",
     "faster-whisper==1.2.1",
