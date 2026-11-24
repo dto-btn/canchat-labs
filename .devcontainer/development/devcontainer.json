@@ -1,0 +1,80 @@
+{
+  "name": "CanChat Labs Development",
+  "image": "mcr.microsoft.com/devcontainers/base:resolute",
+  "overrideFeatureInstallOrder": [
+    "ghcr.io/gccloudone-aurora-collab/devcontainer-features/enhanced-custom-root-ca"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "none",
+      "npmVersion": "none",
+      "pnpmVersion": "none"
+    },
+    "ghcr.io/gccloudone-aurora-collab/devcontainer-features/enhanced-custom-root-ca:4": {
+      "sources": "https://raw.githubusercontent.com/gccloudone-aurora-collab/goc-root-cert-mirror/main/certs/GoC-GdC-Root-A.crt",
+      "fingerprints": "FE:E0:9E:77:43:BF:D4:3E:D7:D4:D3:ED:50:6C:C7:9D:2D:90:70:FF:A9:29:91:16:87:D4:27:33:70:BE:A3:06",
+      "allowInsecureDownload": true
+    }
+  },
+  "containerEnv": {
+    "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/ca-certificates.crt",
+    "UV_SYSTEM_CERTS": "true",
+    "ONNXRUNTIME_NODE_INSTALL_CUDA": "skip",
+    "CYPRESS_INSTALL_BINARY": "0",
+    "NODE_OPTIONS": "--max-old-space-size=12288",
+    "ENV": "dev",
+    "USE_CUDA_DOCKER": "false",
+    "USE_SLIM_DOCKER": "false",
+    "USE_OLLAMA_DOCKER": "false",
+    "WEBUI_BACKEND_URL": "http://localhost:8080",
+    "CORS_ALLOW_ORIGIN": "http://localhost:5173;http://localhost:8080",
+    "DATA_DIR": "${containerWorkspaceFolder}/.dev-data",
+    "SCARF_NO_ANALYTICS": "true",
+    "DO_NOT_TRACK": "true",
+    "ANONYMIZED_TELEMETRY": "false"
+  },
+  "forwardPorts": [
+    5173,
+    8080
+  ],
+  "portsAttributes": {
+    "5173": {
+      "label": "CanChat Frontend",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "CanChat Backend",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": {
+    "system": "sudo apt-get update && sudo apt-get install -y --no-install-recommends build-essential libmariadb-dev libsm6 libxext6 pandoc ffmpeg jq",
+    "frontend": "bash -c 'source \"$NVM_DIR/nvm.sh\" --no-use && nvm install && nvm alias default \"$(cat .nvmrc)\" && npm install -g \"npm@$(node -p \"require(\\\"./package.json\\\").engines.npm\")\" && npm ci --force --no-audit --no-fund --no-progress && rm -rf openwebui/node_modules && ln -s ../node_modules openwebui/node_modules'",
+    "backend": "bash -o pipefail -c 'UV_VERSION=$(sed -n \"s/^required-version = \\\"==\\([^\\\"]*\\)\\\"/\\1/p\" pyproject.toml) && test -n \"$UV_VERSION\" && curl -LsSf \"https://astral.sh/uv/$UV_VERSION/install.sh\" | sudo env UV_UNMANAGED_INSTALL=/usr/local/bin sh && uv --version && uv sync --locked --extra cpu'",
+    "data": "mkdir -p .dev-data && chmod 700 .dev-data && (test -s .dev-data/.webui_secret_key || (umask 077 && openssl rand -hex 32 > .dev-data/.webui_secret_key))"
+  },
+  "waitFor": "postCreateCommand",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "charliermarsh.ruff",
+        "svelte.svelte-vscode",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "editor.formatOnSave": true,
+        "files.watcherExclude": {
+          "**/node_modules/**": true,
+          "**/.venv/**": true,
+          "**/.dev-data/**": true
+        }
+      }
+    }
+  },
+  "remoteUser": "vscode"
+}
