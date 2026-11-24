@@ -172,6 +172,11 @@ dev = [
     "ruff>=0.15.5",
 ]
 
+security = [
+    "bandit[sarif,toml]==1.9.4",
+]
+
+
 [tool.black]
 line-length = 120
 skip-string-normalization = true
@@ -239,3 +244,13 @@ explicit = true
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
+
+[tool.bandit]
+exclude_dirs = [
+    "openwebui/backend/data/cache",
+    ".venv",
+    "node_modules",
+    ".git",
+]
+
+skips = ["B101"]

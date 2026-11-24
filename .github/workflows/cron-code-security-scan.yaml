@@ -1,0 +1,197 @@
+name: Code Security Scan
+
+on:
+  schedule:
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cron-code-security-scan.yaml"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "package.json"
+      - "package-lock.json"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "Dockerfile*"
+      - "containers/**"
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BEARER_IMAGE: "docker.io/bearer/bearer:2.0.2@sha256:b3482c311044d9dd0dc98e929bd08fa38a2ef75a4190af0a093de2b62cc76b21"
+  TRIVY_IMAGE: "ghcr.io/aquasecurity/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb"
+
+jobs:
+  bearer-scan:
+    name: Bearer Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run Bearer
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE:ro" \
+            -w "$GITHUB_WORKSPACE" \
+            "$BEARER_IMAGE" \
+            scan . \
+            --severity critical,high \
+            --format sarif \
+            --hide-progress-bar \
+            --exit-code 0 \
+            > "$RUNNER_TEMP/bearer.sarif"
+
+      - name: Validate SARIF report
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq -e '
+            .version == "2.1.0" and
+            (.runs | type == "array" and length > 0)
+          ' "$RUNNER_TEMP/bearer.sarif" > /dev/null
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: ${{ runner.temp }}/bearer.sarif
+          category: bearer
+
+  trivy-scan:
+    name: Trivy Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run Trivy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE:ro" \
+            -w "$GITHUB_WORKSPACE" \
+            "$TRIVY_IMAGE" \
+            fs \
+            --scanners vuln,misconfig \
+            --severity HIGH,CRITICAL \
+            --format sarif \
+            --no-progress \
+            --exit-code 0 \
+            --skip-files "openwebui/package.json" \
+            --skip-files "openwebui/package-lock.json" \
+            --skip-files "openwebui/pyproject.toml" \
+            --skip-files "openwebui/uv.lock" \
+            --skip-files "openwebui/backend/requirements*.txt" \
+            --skip-files "openwebui/backend/requirements*.lock" \
+            --skip-files "openwebui/crypto/encryption/Cargo.toml" \
+            --skip-files "openwebui/crypto/encryption/Cargo.lock" \
+            --skip-files "openwebui/crypto/encryption/rust-toolchain.toml" \
+            --skip-files "openwebui/**/Dockerfile*" \
+            --skip-files "openwebui/**/docker-compose*.y*ml" \
+            --skip-files "openwebui/**/compose*.y*ml" \
+            . > "$RUNNER_TEMP/trivy.sarif"
+
+      - name: Validate SARIF report
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq -e '
+            .version == "2.1.0" and
+            (.runs | type == "array" and length > 0)
+          ' "$RUNNER_TEMP/trivy.sarif" > /dev/null
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: ${{ runner.temp }}/trivy.sarif
+          category: trivy
+
+  bandit-scan:
+    name: Bandit Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version-file: pyproject.toml
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version-file: pyproject.toml
+
+      - name: Validate uv lockfile
+        run: uv lock --check
+
+      - name: Run Bandit
+        shell: bash
+        env:
+          UV_PROJECT_ENVIRONMENT: ${{ runner.temp }}/bandit-venv
+        run: |
+          set -euo pipefail
+
+          uv run --locked --only-group security bandit \
+            -r . \
+            -c pyproject.toml \
+            --severity-level high \
+            --confidence-level high \
+            --format sarif \
+            --exit-zero \
+            --output "$RUNNER_TEMP/bandit.sarif"
+
+      - name: Validate SARIF report
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq -e '
+            .version == "2.1.0" and
+            (.runs | type == "array" and length > 0) and
+            ([
+              .runs[].invocations[]? |
+              (
+                .toolConfigurationNotifications[]?,
+                .toolExecutionNotifications[]?
+              ) |
+              select(.level == "error")
+            ] | length == 0)
+          ' "$RUNNER_TEMP/bandit.sarif" > /dev/null
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: ${{ runner.temp }}/bandit.sarif
+          category: bandit
