@@ -3,7 +3,7 @@
 	"extends": ["config:best-practices", "mergeConfidence:all-badges"],
 	"baseBranchPatterns": ["main"],
 	"addLabels": ["renovate"],
-	"rebaseWhen": "auto",
+	"rebaseWhen": "behind-base-branch",
 	"timezone": "America/Toronto",
 	"minimumReleaseAge": "14 days",
 	"semanticCommits": "enabled",
