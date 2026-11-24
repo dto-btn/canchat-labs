@@ -59,6 +59,18 @@ jobs:
             --hide-progress-bar \
             --exit-code 0 \
             > "$RUNNER_TEMP/bearer.sarif"
+            
+      - name: Normalize SARIF fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq 'del(.runs[].results[]?.partialFingerprints.primaryLocationLineHash)' \
+            "$RUNNER_TEMP/bearer.sarif" \
+            > "$RUNNER_TEMP/bearer-normalized.sarif"
+
+          mv "$RUNNER_TEMP/bearer-normalized.sarif" \
+            "$RUNNER_TEMP/bearer.sarif"
 
       - name: Validate SARIF report
         shell: bash

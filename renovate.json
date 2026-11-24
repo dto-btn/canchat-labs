@@ -28,7 +28,36 @@
 		"openwebui/crypto/encryption/Cargo.lock",
 		"openwebui/crypto/encryption/rust-toolchain.toml"
 	],
+	"customManagers": [
+		{
+			"customType": "regex",
+			"description": "Security scanner container images",
+			"managerFilePatterns": [
+				".github/workflows/cron-code-security-scan.yaml"
+			],
+			"matchStrings": [
+				"(?:BEARER_IMAGE|TRIVY_IMAGE):\\s*\"(?<depName>[^\"\\s:]+):(?<currentValue>[^@\"\\s]+)@(?<currentDigest>sha256:[a-f0-9]{64})\""
+			],
+			"datasourceTemplate": "docker"
+		}
+	],
 	"packageRules": [
+		{
+			"groupName": "Security scanners",
+			"groupSlug": "security-scanners",
+			"matchPackageNames": [
+				"docker.io/bearer/bearer",
+				"bearer/bearer",
+				"ghcr.io/aquasecurity/trivy",
+				"bandit"
+			],
+			"matchUpdateTypes": [
+				"minor",
+				"patch",
+				"digest",
+				"pinDigest"
+			]
+		},
 		{
 			"groupName": "GitHub Actions",
 			"groupSlug": "github-actions",
