@@ -178,7 +178,7 @@ jobs:
           uv run --locked --only-group security bandit \
             -r . \
             -c pyproject.toml \
-            --severity-level high \
+            --severity-level medium \
             --confidence-level high \
             --format sarif \
             --exit-zero \
